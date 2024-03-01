@@ -5,7 +5,10 @@ require_once 'src/connectToDb.php';
 require_once 'src/Models/UserModel.php';
 
 $loginSessionHandler = new LoginSessionHandler();
-$loginSessionHandler->redirectIfLoggedOut();
+
+if (!$loginSessionHandler->isUserLoggedIn()) {
+    header('Location: login.php');
+}
 
 $uid = $loginSessionHandler->getCurrentUserId();
 

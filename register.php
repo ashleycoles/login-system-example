@@ -5,8 +5,11 @@ require_once 'src/Entities/User.php';
 require_once 'src/connectToDb.php';
 require_once 'src/Models/UserModel.php';
 
-$logginSessionHandler = new LoginSessionHandler();
-$logginSessionHandler->redirectIfLoggedIn();
+$loginSessionHandler = new LoginSessionHandler();
+
+if ($loginSessionHandler->isUserLoggedIn()) {
+    header('Location: account.php');
+}
 
 if (isset($_POST['submit'])) {
     $hashedPassword = password_hash($_POST['password'], PASSWORD_BCRYPT);
@@ -16,11 +19,16 @@ if (isset($_POST['submit'])) {
     $db = connectToDb();
     $userModel = new UserModel($db);
 
-    if ($userModel->addUser($user)) {
+    if (
+            $userModel->isUsernameUnique($user->username) &&
+            $userModel->addUser($user)
+    ) {
         $createdUser = $userModel->getByUsername($user->username);
-        $logginSessionHandler->setLoggedIn($createdUser->id);
+        $loginSessionHandler->setLoggedIn($createdUser->id);
 
         header('Location: account.php');
+    } else {
+        $error = 'Sorry, username already taken';
     }
 }
 
@@ -37,4 +45,9 @@ if (isset($_POST['submit'])) {
     <textarea id="bio" name="bio"></textarea>
 
     <input type="submit" name="submit" value="Sign up" />
+    <?php
+    if (isset($error)) {
+        echo $error;
+    }
+    ?>
 </form>

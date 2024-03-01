@@ -6,7 +6,10 @@ require_once 'src/Models/UserModel.php';
 
 
 $loginSessionHandler = new LoginSessionHandler();
-$loginSessionHandler->redirectIfLoggedIn();
+
+if ($loginSessionHandler->isUserLoggedIn()) {
+    header('Location: account.php');
+}
 
 if (isset($_POST['submit'])) {
     $db = connectToDb();

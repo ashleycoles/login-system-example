@@ -43,7 +43,7 @@ class UserModel
         return $this->hydrate($data);
     }
 
-    public function usernameIsUnique(string $username): bool
+    public function isUsernameUnique(string $username): bool
     {
         $query = $this->db->prepare('SELECT `id` FROM `users` WHERE `username` = :username;');
 

@@ -4,37 +4,29 @@ class LoginSessionHandler
 {
     public function __construct()
     {
-        if (session_status() !== PHP_SESSION_ACTIVE) {
+        // Connect to the session automatically whenever you instantiate a LoginSessionHandler
+        if (session_status() !== PHP_SESSION_ACTIVE) { // Check to make sure the session isn't already active
             session_start();
         }
     }
 
     public function getCurrentUserId(): int|false
     {
-        if (!isset($_SESSION['uid'])) {
+        if (!$this->isUserLoggedIn()) {
             return false;
         }
 
         return $_SESSION['uid'];
     }
 
-    public function redirectIfLoggedIn(string $location = 'account.php'): void
+    public function isUserLoggedIn(): bool
     {
-        if (isset($_SESSION['uid'])) {
-            header("Location: $location");
-        }
-    }
-
-    public function redirectIfLoggedOut(string $location = 'login.php'): void
-    {
-        if (!isset($_SESSION['uid'])) {
-            header("Location: $location");
-        }
+        return isset($_SESSION['uid']);
     }
 
     public function setLoggedIn(int $uid): void
     {
-        if (isset($_SESSION['uid'])) {
+        if ($this->isUserLoggedIn()) {
             throw new Exception('Error - User already logged in');
         }
 

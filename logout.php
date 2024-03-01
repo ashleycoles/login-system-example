@@ -2,10 +2,12 @@
 
 require_once 'src/LoginSessionHandler.php';
 
-$logginSessionHandler = new LoginSessionHandler();
+$loginSessionHandler = new LoginSessionHandler();
 
-$logginSessionHandler->redirectIfLoggedOut();
+if ($loginSessionHandler->isUserLoggedIn()) {
+    header('Location: login.php');
+}
 
-$logginSessionHandler->logout();
+$loginSessionHandler->logout();
 
 header('Location: login.php');
